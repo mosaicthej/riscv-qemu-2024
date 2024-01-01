@@ -13,6 +13,8 @@ QEMU32=qemu-riscv32
 MARCH64=rv64gc
 ABI64=lp64d
 QEMU64=qemu-riscv64
+CC=riscv64-linux-gnu-gcc
+# CC=riscv64-unknown-elf-gcc
 
 # Define targets
 TARGET_32 := ${OUTPUT_DIR}/\${BASE_NAME}_32
@@ -29,16 +31,16 @@ all: \${TARGET_32} \${TARGET_64}
 # Build rules
 \${TARGET_32}: ${SOURCE_FILE}
 	@mkdir -p ${OUTPUT_DIR}
-	riscv64-unknown-elf-gcc -S -march=\${MARCH32} -mabi=\${ABI32} \$< -o \$@.s
-	riscv64-unknown-elf-gcc -c -march=\${MARCH32} -mabi=\${ABI32} \$@.s -o \$@.o
-	riscv64-unknown-elf-gcc -march=\${MARCH32} -mabi=\${ABI32} \$@.o -o \$@
+	\$(CC) -S -march=\${MARCH32} -mabi=\${ABI32} \$< -o \$@.s
+	\$(CC) -c -march=\${MARCH32} -mabi=\${ABI32} \$@.s -o \$@.o
+	\$(CC) -march=\${MARCH32} -mabi=\${ABI32} \$@.o -o \$@
 	\${QEMU32} \$@
 
 \${TARGET_64}: ${SOURCE_FILE}
 	@mkdir -p ${OUTPUT_DIR}
-	riscv64-unknown-elf-gcc -S -march=\${MARCH64} -mabi=\${ABI64} \$< -o \$@.s
-	riscv64-unknown-elf-gcc -c -march=\${MARCH64} -mabi=\${ABI64} \$@.s -o \$@.o
-	riscv64-unknown-elf-gcc -march=\${MARCH64} -mabi=\${ABI64} \$@.o -o \$@
+	\$(CC) -S -march=\${MARCH64} -mabi=\${ABI64} \$< -o \$@.s
+	\$(CC) -c -march=\${MARCH64} -mabi=\${ABI64} \$@.s -o \$@.o
+	\$(CC) -march=\${MARCH64} -mabi=\${ABI64} \$@.o -o \$@
 	\${QEMU64} \$@
 
 # Clean rule
