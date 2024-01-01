@@ -1,0 +1,43 @@
+#!/bin/bash
+
+SOURCE_FILE=$1
+OUTPUT_DIR=$2
+BASE_NAME=$(basename ${SOURCE_FILE} .c)
+
+cat << EOF > Makefile
+BASE_NAME=${BASE_NAME} # since makefile can't do double-expansion...
+
+MARCH32=rv32i
+ABI32=ilp32
+QEMU32=qemu-riscv32
+
+MARCH64=rv64gc
+ABI64=lp64d
+QEMU64=qemu-riscv64
+
+TARGET_32 := \$(addprefix ${OUTPUT_DIR}/,${BASE_NAME}_32)
+TARGET_64 := \$(addprefix ${OUTPUT_DIR}/,${BASE_NAME}_64)
+
+\$(info All targets: \$(TARGET_32) \$(TARGET_64))
+
+.PHONY: all clean
+
+all: \$(TARGET_32) \$(TARGET_64)
+
+${OUTPUT_DIR}/\${BASE_NAME}_32: ${SOURCE_FILE}
+	-mkdir -p ${OUTPUT_DIR}
+	riscv64-unknown-elf-gcc -S -march=\$(MARCH32) -mabi=\$(ABI32) $< -o \$@.s
+	riscv64-unknown-elf-gcc -c -march=\$(MARCH32) -mabi=\$(ABI32) \$@.s -o \$@.o
+	riscv64-unknown-elf-gcc -march=\$(MARCH32) -mabi=\$(ABI32) \$@.o -o \$@
+	\$(QEMU32) \$@
+
+${OUTPUT_DIR}/\${BASE_NAME}_64: ${SOURCE_FILE}
+	-mkdir -p ${OUTPUT_DIR}
+	riscv64-unknown-elf-gcc -S -march=\$(MARCH64) -mabi=\$(ABI64) $< -o \$@.s
+	riscv64-unknown-elf-gcc -c -march=\$(MARCH64) -mabi=\$(ABI64) \$@.s -o \$@.o
+	riscv64-unknown-elf-gcc -march=\$(MARCH64) -mabi=\$(ABI64) \$@.o -o \$@
+	\$(QEMU64) \$@
+
+clean:
+	rm -f ${OUTPUT_DIR}/*\${BASE_NAME}_32* ${OUTPUT_DIR}/*\${BASE_NAME}_64*
+EOF

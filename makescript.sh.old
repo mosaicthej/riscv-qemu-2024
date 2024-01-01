@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# This script assumes that you have your RISC-V toolchain and QEMU set up correctly
+# and that they are in your PATH.
+
+MARCH="rv32i"
+ABI="ilp32"
+QEMU="qemu-riscv32"
+DIST="."
+
+while getopts "d:m" opt; do
+  case $opt in
+    d) DIST="$OPTARG"
+    ;;
+    m) MARCH="rv64gc"
+        ABI="lp64d"
+        QEMU="qemu-riscv64"
+        echo "cooking the 64 bit version"
+    ;;
+    \?) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+shift $((OPTIND -1))
+
+# Check command line arguments
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 source_file [-d dist] [-m]"
+    exit 1
+fi
+
+SOURCE_FILE=$1
+BASE_NAME=${SOURCE_FILE%.*}
+
+mkdir -p $DIST
+
+# Step 1: Compile C source code to assembly
+riscv64-unknown-elf-gcc -S -march=$MARCH -mabi=$ABI $SOURCE_FILE -o $DIST/$BASE_NAME.s
+echo "Generated assembly code in $DIST/$BASE_NAME.s"
+
+# Step 2: Assemble .S to .o
+riscv64-unknown-elf-gcc -c -march=$MARCH -mabi=$ABI $DIST/$BASE_NAME.s -o $DIST/$BASE_NAME.o
+echo "Generated object code in $DIST/$BASE_NAME.o"
+
+# Step 3: Link .o to executable
+riscv64-unknown-elf-gcc -march=$MARCH -mabi=$ABI $DIST/$BASE_NAME.o -o $DIST/$BASE_NAME
+echo "Generated executable in $DIST/$BASE_NAME"
+
+# Step 4: Run executable in QEMU
+$QEMU $DIST/$BASE_NAME
+
