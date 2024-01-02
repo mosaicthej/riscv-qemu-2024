@@ -10,6 +10,7 @@ CC=riscv64-unknown-elf-gcc
 SOURCE=${SOURCE_FILE}
 OUTPUT_DIR=${OUTPUT_DIR}
 BASE_NAME=${BASE_NAME}
+GDBPORT=\$(shell expr \`id -u\` % 5000 + 25000)
 
 # Architecture-specific flags
 FLAGS32=-march=rv32i -mabi=ilp32
@@ -24,7 +25,7 @@ TARGET_64 := \$(OUTPUT_DIR)/\$(BASE_NAME)_64
 # Display targets for debugging
 \$(info All targets: \$(TARGET_32) \$(TARGET_64))
 
-.PHONY: all clean
+.PHONY: all clean gdb32 gdb64
 
 # Default target
 all: \$(TARGET_32) \$(TARGET_64)
@@ -44,6 +45,17 @@ all: \$(TARGET_32) \$(TARGET_64)
 	\$(CC) -c -g \$(FLAGS64) \$@.s -o \$@.o
 	\$(CC) \$(FLAGS64) \$@.o -o \$@
 	\$(QEMU64) \$@
+
+# GDB rules
+gdb32: \$(TARGET_32)
+	@echo "Starting GDB server on port \$(GDBPORT) for 32-bit target..."
+	\$(QEMU32) -g \$(GDBPORT) \$(TARGET_32) &
+	@echo "Now run 'gdb \$(TARGET_32)' in another window and type 'target remote localhost:\$(GDBPORT)'"
+
+gdb64: \$(TARGET_64)
+	@echo "Starting GDB server on port \$(GDBPORT) for 64-bit target..."
+	\$(QEMU64) -g \$(GDBPORT) \$(TARGET_64) &
+	@echo "Now run 'gdb \$(TARGET_64)' in another window and type 'target remote localhost:\$(GDBPORT)'"
 
 # Clean rule
 clean:
