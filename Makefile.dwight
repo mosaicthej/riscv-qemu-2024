@@ -1,0 +1,69 @@
+##### Common variables #####
+# CC: C-Compiler; AS: Assembler
+CC=gcc
+AS=as
+# RISCV_PREFIX: prefix to riscv toolchain
+RISCV_PREFIX:=riscv64-unknown-elf-
+# CrCC: Cross compiler to riscv
+CrCC=$(RISCV_PREFIX)$(CC)
+CrAS=$(RISCV_PREFIX)$(AS)
+# port for GDB
+GDBPORT=$(shell expr `id -u` % 5000 + 25000)
+
+##### Project Variables #####
+# this part needs to be changed depending on input file and desired output dir
+SOURCE=printfd-test
+OUTDIR=printfd_out
+
+##### Architecture-specific flags #####
+ARCH32=-march=rv32i -mabi=ilp32
+ARCH64=-march=rv64gc -mabi=lp64d
+QEMU32=qemu-riscv32
+QEMU64=qemu-riscv64
+
+##### define targets #####
+TARGET_32 := $(OUTDIR)/$(SOURCE)_32
+TARGET_64 := $(OUTDIR)/$(SOURCE)_64
+
+# Display targets for debugging
+$(info All targets: $(TARGET_64) $(TARGET_32))
+
+.PHONY: all clean gdb32 gdb64
+
+# make everything as 1st rule
+all: $(TARGET_32) $(TARGET_64)
+
+# 32 bit target
+$(TARGET_32): $(SOURCE)
+	@mkdir -p $(OUTDIR)
+	$(CrAS) -c -g $(ARCH32) $(SOURCE).S -o $(TARGET_32).o
+	# make the binary
+	$(CrCC) -g $(ARCH32) $(TARGET_32).o -o $(TARGET_32)
+#	$(QEMU32) $(TARGET_32) # execute it with qemu
+
+# 64 bit target
+$(TARGET_64): $(SOURCE)
+	@mkdir -p $(OUTDIR)
+	$(CrAS) -g $(ARCH64) $(SOURCE).S -o $(TARGET_64).o
+	# make the binary
+	$(CrCC) -g $(ARCH64) $(TARGET_64).o -o $(TARGET_64)
+#	$(QEMU64) $(TARGET_64) # execute it with qemu
+
+# GDBs
+gdb32: $(TARGET_32)
+	@echo "Starting GDB server on port $(GDBPORT) for 32-bit target..."
+	@echo "please run `gdb $(TARGET_32)` on another terminal,"
+	@echo "once started, type `target remote localhost:$(GDBPORT)`"
+	$(QEMU32) -g $(GDBPORT) $(TARGET_32)
+
+gdb64: $(TARGET_64)
+	@echo "Starting GDB server on port $(GDBPORT) for 64-bit target..."
+	@echo "please run `gdb $(TARGET_64)` on another terminal,"
+	@echo "once started, type `target remote localhost:$(GDBPORT)`"
+	$(QEMU64) -g $(GDBPORT) $(TARGET_64)
+
+# clean
+clean:
+	rm -f $(TARGET_32)*
+	rm -f $(TARGET_64)*
+
