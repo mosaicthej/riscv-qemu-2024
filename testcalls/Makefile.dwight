@@ -12,7 +12,7 @@ GDBPORT=$(shell expr `id -u` % 5000 + 25000)
 
 ##### Project Variables #####
 # this part needs to be changed depending on input file and desired output dir
-SOURCE=printfd-test
+SOURCE=testcalls
 OUTDIR=printfd_out
 
 ##### Architecture-specific flags #####
@@ -31,12 +31,12 @@ $(info All targets: $(TARGET_64) $(TARGET_32))
 .PHONY: all clean gdb32 gdb64
 
 # make everything as 1st rule
-all: $(TARGET_32) $(TARGET_64)
+all: $(TARGET_64) $(TARGET_32)
 
 # 32 bit target
 $(TARGET_32): $(SOURCE)
 	@mkdir -p $(OUTDIR)
-	$(CrCC) -c -g $(ARCH32) $(SOURCE).S -o $(TARGET_32).o
+	$(CrCC) -c -g $(ARCH32) $(SOURCE)_32.S -o $(TARGET_32).o
 	# make the binary
 	$(CrCC) -g $(ARCH32) $(TARGET_32).o -o $(TARGET_32)
 #	$(QEMU32) $(TARGET_32) # execute it with qemu
@@ -44,7 +44,7 @@ $(TARGET_32): $(SOURCE)
 # 64 bit target
 $(TARGET_64): $(SOURCE)
 	@mkdir -p $(OUTDIR)
-	$(CrAS) -g $(ARCH64) $(SOURCE).S -o $(TARGET_64).o
+	$(CrAS) -g $(ARCH64) $(SOURCE)_64.S -o $(TARGET_64).o
 	# make the binary
 	$(CrCC) -g $(ARCH64) $(TARGET_64).o -o $(TARGET_64)
 #	$(QEMU64) $(TARGET_64) # execute it with qemu
