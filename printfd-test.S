@@ -3,19 +3,20 @@
 #	.attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0"
 #	.attribute unaligned_access, 0
 #	.attribute stack_align, 16
-	.text
+#	.text
 	.section	.rodata
 	.align	3
 #.LC0:
+fmt:
 	.string	"Answer %d %d %d %d %d             %d %d %d %d %d            %d %d %d %d %d\n"
-	.text
+.text
 	.align	1
 	.globl	main
-#	.type	main, @function
+	.type	main, @function
 main:
-	addi	sp,sp,-80
-	sd	ra,72(sp)
-	sd	s0,64(sp)
+	addi	sp,sp,-40
+	sd	ra,36(sp)
+	sd	s0,32(sp)
 	addi	s0,sp,80
 	li	a5,15
 	sd	a5,56(sp)
@@ -40,8 +41,7 @@ main:
 	li	a3,3
 	li	a2,2
 	li	a1,1
-	lui	a0,%hi(.LC0)
-	addi	a0,a0,%lo(.LC0)
+	la 	a0, str 
 	call	printf
 	li	a5,0
 	mv	a0,a5
