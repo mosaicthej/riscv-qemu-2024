@@ -3,7 +3,7 @@
 CC=gcc
 AS=as
 # RISCV_PREFIX: prefix to riscv toolchain
-RISCV_PREFIX:=riscv64-unknown-elf-
+RISCV_PREFIX=riscv64-unknown-elf-
 # CrCC: Cross compiler to riscv
 CrCC=$(RISCV_PREFIX)$(CC)
 CrAS=$(RISCV_PREFIX)$(AS)
@@ -36,7 +36,7 @@ all: $(TARGET_32) $(TARGET_64)
 # 32 bit target
 $(TARGET_32): $(SOURCE)
 	@mkdir -p $(OUTDIR)
-	$(CrAS) -c -g $(ARCH32) $(SOURCE).S -o $(TARGET_32).o
+	$(CrCC) -c -g $(ARCH32) $(SOURCE).S -o $(TARGET_32).o
 	# make the binary
 	$(CrCC) -g $(ARCH32) $(TARGET_32).o -o $(TARGET_32)
 #	$(QEMU32) $(TARGET_32) # execute it with qemu
