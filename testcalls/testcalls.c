@@ -6,11 +6,11 @@ int inputNumber() {
   scanf("%d", &num);
   return num;
 }
-
+/*
 int addTen(int num) {
   return num + 10;
 }
-
+*/
 void printNumber(int num) {
   printf("Number plus 10 is %d\n", num);
 }
