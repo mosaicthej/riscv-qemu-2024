@@ -24,6 +24,7 @@ $(info All targets: $(TARGET_64) $(TARGET_32))
 # qemus gdbs are phony because they are not actual file
 
 all: $(TARGET_32) #$(TARGET_64)
+all: $(TARGET_32) $(TARGET_64)
 
 $(TARGET_32): testcall_32.S addTen.S
 	@mkdir -p $(OUTDIR)
