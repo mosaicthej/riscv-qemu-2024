@@ -23,21 +23,22 @@ $(info All targets: $(TARGET_64) $(TARGET_32))
 .PHONY: all clean qemu32 qemu64 gdb32 gdb64
 # qemus gdbs are phony because they are not actual file
 
-all: $(TARGET_32) #$(TARGET_64)
 all: $(TARGET_32) $(TARGET_64)
 
 $(TARGET_32): testcall_32.S addTen.S
 	@mkdir -p $(OUTDIR)
-	$(CrAS) -g $(ARCH32) testcall_32.S -o testcall_32.o
-	$(CrAS) -g $(ARCH32) addTen.S -o addTen_32.o 
+	$(CrAS) -g $(ARCH32) testcall_32.S -o $(OUTDIR)/testcall_32.o
+	$(CrAS) -g $(ARCH32) addTen.S -o $(OUTDIR)/addTen_32.o 
 	# same assembly code, but elf format would still differ...
-	$(CrCC) -g $(ARCH32) testcall_32.o addTen_32.o -o $(TARGET_32)
+	$(CrCC) -g $(ARCH32) $(OUTDIR)/testcall_32.o $(OUTDIR)/addTen_32.o \
+		-o $(TARGET_32)
 
 $(TARGET_64): testcall_64.S addTen.S
 	@mkdir -p $(OUTDIR)
-	$(CrAS) -g $(ARCH64) testcall_64.S -o testcall_64.o
-	$(CrAS) -g $(ARCH64) addTen.S -o addTen_64.o
-	$(CrCC) -g $(ARCH64) testcall_64.o addTen_64.o -o $(TARGET_64)
+	$(CrAS) -g $(ARCH64) testcall_64.S -o $(OUTDIR)/testcall_64.o
+	$(CrAS) -g $(ARCH64) addTen.S -o $(OUTDIR)/addTen_64.o
+	$(CrCC) -g $(ARCH64) $(OUTDIR)/testcall_64.o $(OUTDIR)/addTen_64.o \
+		-o $(TARGET_64)
 
 # can just type `make qemu32` `make qemu64` to run the program...
 # this is like xv6 way... but I guess Dwight won't like this...
