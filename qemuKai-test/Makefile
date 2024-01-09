@@ -15,6 +15,15 @@ QEMU64=/opt/qemu215/bin/qemu-riscv64
 
 all: testnewcalls_32 teststrings_32
 
+testlistsnola_32: testlistsnola_32.o
+	$(PREF)$(LD) $(LDFLAGS32) -o $@ $<
+testlistsnola_32.o: testlistmanual32.S
+	$(PREF)$(AS) $(FLAGS32) -g -o $@ $<
+
+testlists_32: testlists_32.o
+	$(PREF)$(LD) $(LDFLAGS32) -o $@ $<
+testlists_32.o: testlist32.S
+	$(PREF)$(AS) $(FLAGS32) -g -o $@ $<
 testnewcalls_32: testnewcalls_32.o
 	$(PREF)$(LD) $(LDFLAGS32) -o $@ $<
 
