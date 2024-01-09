@@ -15,6 +15,13 @@ QEMU64=/opt/qemu215/bin/qemu-riscv64
 
 all: testnewcalls_32 teststrings_32
 
+testlistsgcc_32: testlistsgcc_32.o # need libc functions, so use gcc's linker
+	$(PREF)gcc -march=rv32i -mabi=ilp32 -o $@ $<
+testlistsgcc_32.o: testlistgcc32.s
+	$(PREF)$(AS) $(FLAGS32) -g -o $@ $<
+testlistgcc32.s: testlist.c
+	$(PREF)gcc -march=rv32i -mabi=ilp32 -S -o $@ $<
+
 testlistsnola_32: testlistsnola_32.o
 	$(PREF)$(LD) $(LDFLAGS32) -o $@ $<
 testlistsnola_32.o: testlistmanual32.S
