@@ -73,6 +73,7 @@ _start:
   ecall
 
   # Read numbers for list2
+  la a0, list2
   call read_numbers
   la a0, list2
   call calculate_sum # a0 will be holding the sum
