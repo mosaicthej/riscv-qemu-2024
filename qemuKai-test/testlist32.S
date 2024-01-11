@@ -12,35 +12,32 @@ sum_str:    .string "Sum of the numbers: "
 newline:    .string "\n"
 
 .section .data
-# .align 2
-# .section .data
+.align 2
 
-# .local list1
-# list1:  .space 1024
+.local list1
+list1:  .space 1024
 
-# .local list2
-# list2:  .space 1024
+.local list2
+list2:  .space 1024
 
-# .local sum1
-# sum1:   .word 0
+.local sum1
+sum1:   .word 0
 
-# .local sum2
-# sum2:   .word 0
+.local sum2
+sum2:   .word 0
 
-
-	.text
-	.local	list1
-	.comm	list1,1024,4
-	.local	list2
-	.comm	list2,1024,4
-	.local	count1
-	.comm	count1,4,4
-	.local	count2
-	.comm	count2,4,4
-	.local	sum1
-	.comm	sum1,4,4
-	.local	sum2
-	.comm	sum2,4,4
+#	.local	list1
+#	.comm	list1,1024,4
+#	.local	list2
+#	.comm	list2,1024,4
+#	.local	count1
+#	.comm	count1,4,4
+#	.local	count2
+#	.comm	count2,4,4
+#	.local	sum1
+#	.comm	sum1,4,4
+#	.local	sum2
+#	.comm	sum2,4,4
 
 
 .section .text

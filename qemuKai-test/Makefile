@@ -5,8 +5,8 @@ LD=ld
 FLAGS32=-march=rv32i -mabi=ilp32
 FLAGS64=-march=rv64gc -mabi=lp64d
 
-LDFLAGS32=-m elf32lriscv
-LDFLAGS64=-m elf64lriscv
+LDFLAGS32=-m elf32lriscv --no-relax
+LDFLAGS64=-m elf64lriscv --no-relax
 
 QEMU32=/opt/qemu215/bin/qemu-riscv32
 QEMU64=/opt/qemu215/bin/qemu-riscv64
