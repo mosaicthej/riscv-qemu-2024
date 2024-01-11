@@ -13,7 +13,10 @@ QEMU64=/opt/qemu215/bin/qemu-riscv64
 
 .PHONY: all qemu32 qemu64 clean gdb32 gdb64
 
-all: testnewcalls_32 teststrings_32 testlists_32 testlistsnola_32 testlistsgcc_32
+binaries=testnewcalls_32 teststrings_32 testlists_32 testlistsnola_32 testlistsgcc_32
+
+
+all: $(binaries)
 
 testlistsgcc_32: testlistsgcc_32.o # need libc functions, so use gcc's linker
 	$(PREF)gcc -march=rv32i -mabi=ilp32 -o $@ $<
@@ -52,7 +55,7 @@ teststrings_32.o: teststrings.S
 	$(PREF)$(AS) $(FLAGS32) -g -o $@ $<
 
 clean:
-	rm -f	testnewcalls_32 testnewcalls_64 teststrings_32 *.o
+	rm -f	$(binaries) *.o *.s
 
 qemu32: testnewcalls_32
 	$(QEMU32) testnewcalls_32
