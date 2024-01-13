@@ -14,6 +14,11 @@ newline:    .string "\n"
 .section .data
 .align 2
 
+# emits `list1` to symbol table. 
+# it's okay to not have this line.
+# but gdb would be sad if you ask him about list1.
+# because it won't find it.
+
 .local list1 
 list1:  .space 1024
 
@@ -26,8 +31,31 @@ sum1:   .word 0
 .local sum2
 sum2:   .word 0
 
+# `.local` directive emits the label to symbol table
+
+# `.comm` or `.common` directive emits the object to bss section instead
+# of being part of elf file
+
+# I've seen the compiler put it in bss instead of `.data`, but then linker
+# needs to do things to figure out where is the bss at.
+
+#	.local	list1 
+#	.comm	list1,1024,4
+#	.local	list2
+#	.comm	list2,1024,4
+#	.local	count1
+#	.comm	count1,4,4
+#	.local	count2
+#	.comm	count2,4,4
+#	.local	sum1
+#	.comm	sum1,4,4
+#	.local	sum2
+#	.comm	sum2,4,4
+
+
 .section .text
 .global _start # use _start instead of main, as we don't have libc and crt0
+# needs to emit this to global symbol table (this is must) so things can find it.
 _start:
   # Print input prompt
   li a7, SYS_printStr
@@ -63,6 +91,8 @@ _start:
   call read_numbers
   la a0, list2
   call calculate_sum # a0 will be holding the sum
+  # this is same as `jal` or `call ra calculate_sum`
+  # `ra` is default. You can change it to other registers.
 
   la t0, sum2   # t0 <- &sum2
   sw a0, 0(t0)
