@@ -28,7 +28,7 @@ if [ "$2" = "--64" ]; then
     if [ "$3" = "--gdb" ]; then
         echo "Running $BINARY with gdb on port $GDBPORT"
         echo "on another terminal, run: $TOOLCHAIN-gdb $BINARY"
-        echo "then in gdb, run: target remote localhost:$GDBPORT"
+        echo "then in gdb, type: target remote localhost:$GDBPORT"
         $QEMU64 -g $GDBPORT $BINARY
     else
         $QEMU64 $BINARY
@@ -36,7 +36,7 @@ if [ "$2" = "--64" ]; then
 elif [ "$2" = "--gdb" ]; then
     echo "Running $BINARY with gdb on port $GDBPORT"
     echo "on another terminal, run: $TOOLCHAIN-gdb $BINARY"
-    echo "then in gdb, run: target remote localhost:$GDBPORT"
+    echo "then in gdb, type: target remote localhost:$GDBPORT"
     if [ "$3" = "--64" ]; then
         $QEMU64 -g $GDBPORT $BINARY
     else

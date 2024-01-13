@@ -26,10 +26,10 @@ list1:  .space 1024
 list2:  .space 1024
 
 .local sum1
-sum1:   . 0
+sum1:   .dword 0 # use .dword for 64 bit ver.
 
 .local sum2
-sum2:   .word 0
+sum2:   .dword 0
 
 # `.local` directive emits the label to symbol table
 
@@ -145,3 +145,4 @@ sum_loop:
     j sum_loop           # Repeat the loop
 end_sum:
     ret
+

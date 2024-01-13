@@ -16,7 +16,7 @@ LDFLAGS64=-m elf64lriscv --no-relax
 
 .PHONY: all clean
 
-binaries= testlists32 testlists64
+binaries= testlists_32 testlists_64
 # put names of all binaries here so easier to clean later
 
 all: $(binaries)
